@@ -10,18 +10,17 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CircuitBreakService {
 
-    private static final String CIRCUITBREAKER_CONFIG = "fallback";
-
+    private static final String CIRCUIT_BREAKER_CONFIG = "circuitBreakerConfig";
 
     // 애너테이션 @CircuitBreaker를 통한 메서드는 회로차단기의 대상이 된다.
-    @CircuitBreaker(name = CIRCUITBREAKER_CONFIG, fallbackMethod = "fallback")
+    @CircuitBreaker(name = CIRCUIT_BREAKER_CONFIG, fallbackMethod = "fallback")
     public String process(String param) {
         return callFeignClient(param);
     }
 
     private String fallback(String param, Exception e){
         // circuit breaker의 fallback은 IgonoreException에 의해서도 실행된다.
-        // 다만 IgnoreException에 등록된 유형의 예외를 통해서는 open상태로의 전환은 이뤄지지 않는다.
+        // 다만 IgnoreException에 등록된 유형의 예외를 통해서는 open 상태로의 전환은 이뤄지지 않는다.
         System.out.println(param + "파라미터가 예외를 유발했습니다.");
         return "예외 종류 : " + e.toString();
     }
